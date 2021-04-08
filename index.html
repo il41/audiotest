@@ -1,0 +1,39 @@
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+</style>
+
+<p>click anywhere on the page to play track</p>
+
+<script>
+  const ctx = new window.AudioContext()
+  const src = ctx.createBufferSource()
+  const gn = ctx.createGain()
+
+  src.connect(gn)
+  gn.connect(ctx.destination)
+  
+  function decodeAudioData (data) {
+    ctx.decodeAudioData(data, (buffer) => {
+      src.buffer = buffer // load audio buffer into audio source
+    })
+  }
+  
+  // get the audio data from the mp3 file
+  // (audio recording by orangefreesounds)
+  // (https://freesound.org/people/orangefreesounds/sounds/329855/)
+  fetch('0.mp3')
+    .then(res => res.arrayBuffer())
+    .then(data => decodeAudioData(data))
+  
+  // we need the viewers permission to play the track
+  document.body.addEventListener('click', () => {
+    src.start() // start playing audio source
+  })
+</script>
